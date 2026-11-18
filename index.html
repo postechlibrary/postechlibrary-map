@@ -1008,37 +1008,24 @@
 
 
 <script>
- // 🚀 1. 특수 위치 매핑 (화면 표시용 'name' 속성 + 영어교양 완비)
+    // 🚀 1. 특수 위치 매핑 (스마트도서관 예외는 맨 아래 로직에 포함, 보존서고/딸림자료/영어교양 완비)
     const specialLocations = {
-        // --- 신착서가 ---
         "신착서가": { floor: 2, ids: ["_2F_new1", "_2F_new2"], name: "신착서가" },
-        
-        // 🚨 [신규 추가] 영어교양 구역
-        "영어교양 2층": { floor: 2, ids: ["_2F_Eng", "2f_Eng"], name: "영어교양" },
-
-        // --- 삼각서가 ---
+        "영어교양": { floor: 2, ids: ["_2F_Eng", "2f_Eng"], name: "영어교양" },
         "삼각서가A": { floor: 2, ids: ["_2F_CUA"], name: "삼각서가 A" },
         "삼각서가B": { floor: 2, ids: ["_2F_CUB"], name: "삼각서가 B" },
         "삼각서가C": { floor: 2, ids: ["_2F_CUC1"], name: "삼각서가 C" },
         "삼각서가": { floor: 2, ids: ["_2F_CUA", "_2F_CUB", "_2F_CUC1"], name: "삼각서가" }, 
-        
-        // --- 원형서가 ---
         "원형서가(2F)A": { floor: 2, ids: ["_2F-CollectionA"], name: "원형서가 A" },
         "원형서가(2F)B": { floor: 2, ids: ["_2F-CollectionB"], name: "원형서가 B" },
         "원형서가": { floor: 2, ids: ["_2F-CollectionA", "_2F-CollectionB"], name: "원형서가" },
-
-        // --- 보존서고 및 딸림자료 ---
         "보존서고": { floor: 2, ids: ["_2F_desk"], name: "대출데스크 (보존서고)" },
         "딸림자료": { floor: 2, ids: ["_2F_desk"], name: "대출데스크 (딸림자료)" },
         "매거진존": { floor: 2, ids: ["_2F_Mag"], name: "매거진존" },
         "DVD": { floor: 2, ids: ["_2F_DVD"], name: "DVD 코너" },
-
-        // --- 3층 / 4층 특수 서가 ---
         "지정도서": { floor: 3, ids: ["_3F_Reserve"], name: "지정도서" }, 
         "제본저널": { floor: 4, ids: ["_4F_bound"], name: "제본저널" },   
         "참고자료": { floor: 4, ids: ["_4F_REF"], name: "참고자료" },
-
-        // --- 알마 영문 코드값 ---
         "c2n": { floor: 2, ids: ["_2F_new1", "_2F_new2"], name: "신착서가" },
         "c3a": { floor: 2, ids: ["_2F_desk"], name: "대출데스크" },
         "c2a": { floor: 2, ids: ["_2F_desk"], name: "대출데스크" },
@@ -1051,54 +1038,175 @@
         "c4r": { floor: 4, ids: ["_4F_REF"], name: "참고자료" },
         "c3r": { floor: 3, ids: ["_3F_Reserve"], name: "지정도서" }
     };
-    // 🚀 2. 일반 서가 매핑 (3층 77개 구역)
+
+    // 🚀 2. 일반 서가 매핑 (3층 154개 구역 - 직관적인 앞면/뒷면 이름표로 수정 완료)
     const shelfMapping = [
-        { id: "_3F-301", start: "A", end: "AC999" }, { id: "_3F-302", start: "AD", end: "AF999" },
-        { id: "_3F-303", start: "AG", end: "AI999" }, { id: "_3F-304", start: "AJ", end: "AL999" },
-        { id: "_3F-305", start: "AM", end: "AO999" }, { id: "_3F-306", start: "AP", end: "AR999" },
-        { id: "_3F-307", start: "AS", end: "AU999" }, { id: "_3F-308", start: "AV", end: "AX999" },
-        { id: "_3F-309", start: "AY", end: "AZ999" }, { id: "_3F-310", start: "B", end: "BD999" },
-        { id: "_3F-311", start: "BE", end: "BH999" }, { id: "_3F-312", start: "BI", end: "BK999" },
-        { id: "_3F-313", start: "BL", end: "BN999" }, { id: "_3F-314", start: "BO", end: "BZ999" },
-        { id: "_3F-319", start: "C", end: "CZ999" }, { id: "_3F-320", start: "D", end: "DZ999" },
-        { id: "_3F-321", start: "E", end: "EZ999" }, { id: "_3F-322", start: "F", end: "FZ999" },
-        { id: "_3F-323", start: "G", end: "GZ999" }, { id: "_3F-324", start: "H", end: "HZ999" },
-        { id: "_3F-325", start: "I", end: "IZ999" }, { id: "_3F-326", start: "J", end: "JZ999" },
-        { id: "_3F-327", start: "K", end: "KZ999" }, { id: "_3F-328", start: "L", end: "LZ999" },
-        { id: "_3F-329", start: "M", end: "MZ999" }, { id: "_3F-330", start: "N", end: "NZ999" },
-        { id: "_3F-331", start: "O", end: "OZ999" }, { id: "_3F-332", start: "P", end: "PQ999" },
-        { id: "_3F-333", start: "PR", end: "PS9999" }, { id: "_3F-334", start: "PT", end: "PZ999" }, 
-        { id: "_3F-335", start: "Q", end: "QZ9999" }, { id: "_3F-336", start: "QE", end: "QH999" }, 
-        { id: "_3F-337", start: "QI", end: "QK999" }, { id: "_3F-338", start: "QL", end: "QN999" }, 
-        { id: "_3F-339", start: "QO", end: "QS999" }, { id: "_3F-340", start: "QT", end: "QZ999" }, 
-        { id: "_3F-341", start: "R", end: "RZ999" }, { id: "_3F-342", start: "S", end: "SZ999" }, 
-        { id: "_3F-343", start: "T", end: "TA999" }, { id: "_3F-344", start: "TB", end: "TD999" }, 
-        { id: "_3F-345", start: "TE", end: "TG999" }, { id: "_3F-346", start: "TH", end: "TK999" }, 
-        { id: "_3F-347", start: "TL", end: "TN999" }, { id: "_3F-348", start: "TO", end: "TR999" }, 
-        { id: "_3F-349", start: "TS", end: "TZ999" }, { id: "_3F-350", start: "U", end: "UZ999" }, 
-        { id: "_3F-351", start: "V", end: "VZ999" }, { id: "_3F-352", start: "W", end: "WZ999" }, 
-        { id: "_3F-353", start: "X", end: "XZ999" }, { id: "_3F-354", start: "Y", end: "YZ999" }, 
-        { id: "_3F-355", start: "Z", end: "Z99" }, { id: "_3F-356", start: "Z100", end: "Z199" }, 
-        { id: "_3F-357", start: "Z200", end: "Z299" }, { id: "_3F-358", start: "Z300", end: "Z399" }, 
-        { id: "_3F-359", start: "Z400", end: "Z499" }, { id: "_3F-360", start: "Z500", end: "Z599" }, 
-        { id: "_3F-361", start: "Z600", end: "Z699" }, { id: "_3F-362", start: "Z700", end: "Z799" }, 
-        { id: "_3F-363", start: "Z800", end: "Z999" }, { id: "_3F-364", start: "000", end: "099" }, 
-        { id: "_3F-365", start: "100", end: "199" }, { id: "_3F-366", start: "200", end: "299" }, 
-        { id: "_3F-367", start: "300", end: "399" }, { id: "_3F-368", start: "401", end: "500" }, 
-        { id: "_3F-369", start: "501", end: "600" }, { id: "_3F-370", start: "601", end: "700" }, 
-        { id: "_3F-371", start: "701", end: "800" }, { id: "_3F-372", start: "801", end: "899" }, 
-        { id: "_3F-373", start: "900", end: "999" }
+        { id: "_3F-301", name: "서가 301 앞면", start: "AC1.G73", end: "AM79.K8" },
+        { id: "_3F-301", name: "서가 301 뒷면", start: "AM79.K8", end: "B127.T3" },
+        { id: "_3F-302", name: "서가 302 앞면", start: "B127.T3", end: "B3279.H45" },
+        { id: "_3F-302", name: "서가 302 뒷면", start: "B3279.H45", end: "B5254.이95" },
+        { id: "_3F-303", name: "서가 303 앞면", start: "B5254.전686", end: "BF295.C66" },
+        { id: "_3F-303", name: "서가 303 뒷면", start: "BF295.M36", end: "BF637.C45" },
+        { id: "_3F-304", name: "서가 304 앞면", start: "BF637.C45", end: "BH61.강54" },
+        { id: "_3F-304", name: "서가 304 뒷면", start: "BH61.이271", end: "BL2240.안146" },
+        { id: "_3F-305", name: "서가 305 앞면", start: "BL2240.이52", end: "BQ7405.W55" },
+        { id: "_3F-305", name: "서가 305 뒷면", start: "BQ7420.삼74", end: "BX8674.G73" },
+        { id: "_3F-306", name: "서가 306 앞면", start: "BX8695.H64", end: "D21.3.수22" },
+        { id: "_3F-306", name: "서가 306 뒷면", start: "D21.3.아76", end: "D6311.G4465" },
+        { id: "_3F-307", name: "서가 307 앞면", start: "DG311.G5", end: "DS734.K3" },
+        { id: "_3F-307", name: "서가 307 뒷면", start: "DS734.7", end: "DS779.26.김64" },
+        { id: "_3F-308", name: "서가 308 앞면", start: "DS779.26.김68", end: "DS902.S75" },
+        { id: "_3F-308", name: "서가 308 뒷면", start: "DS902.U562", end: "DS907.14.태94" },
+        { id: "_3F-309", name: "서가 309 앞면", start: "DS907.14.한16", end: "DS912.25.변883" },
+        { id: "_3F-309", name: "서가 309 뒷면", start: "DS912.25.신54", end: "DS915.5.김65" },
+        { id: "_3F-310", name: "서가 310 앞면", start: "DS915.5.김92", end: "DS917.25.민14" },
+        { id: "_3F-310", name: "서가 310 뒷면", start: "DS917.25.박14", end: "DS924.강66" },
+        { id: "_3F-311", name: "서가 311 앞면", start: "DS924.경46", end: "E840.B785" },
+        { id: "_3F-311", name: "서가 311 뒷면", start: "E840.B785", end: "GB1197.6.G76" },
+        { id: "_3F-312", name: "서가 312 앞면", start: "GB1197.7.B4", end: "GR342.김75" },
+        { id: "_3F-312", name: "서가 312 뒷면", start: "GR342.김94", end: "GV1458.S5.최12" },
+        { id: "_3F-313", name: "서가 313 앞면", start: "GV1458.S5.판74", end: "HB72.S434" },
+        { id: "_3F-313", name: "서가 313 뒷면", start: "HB73.감192", end: "HB501.M3565" },
+        { id: "_3F-314", name: "서가 314 앞면", start: "HB501.M38", end: "HC79.S9.G67" },
+        { id: "_3F-314", name: "서가 314 뒷면", start: "HC79.T4.강34", end: "HC467. 한16" },
+        { id: "_3F-319", name: "서가 319 앞면", start: "HC467. 황68", end: "HD30.29.G38" },
+        { id: "_3F-319", name: "서가 319 뒷면", start: "HD30.29.H54", end: "HD58.7.B345" },
+        { id: "_3F-320", name: "서가 320 앞면", start: "HD58.7.B58", end: "HD2095.5.김65" },
+        { id: "_3F-320", name: "서가 320 뒷면", start: "HD2095.5..이66", end: "HD9698.A2.W53" },
+        { id: "_3F-321", name: "서가 321 앞면", start: "HD9698.U52", end: "HF5415.33.K6" },
+        { id: "_3F-321", name: "서가 321 뒷면", start: "HF5415.332.O43", end: "HG176.7.D643" },
+        { id: "_3F-322", name: "서가 322 앞면", start: "HG176.7.G57", end: "HG4930.L69" },
+        { id: "_3F-322", name: "서가 322 뒷면", start: "HG4930.M43", end: "HM449.B39" },
+        { id: "_3F-323", name: "서가 323 앞면", start: "HM465.김24", end: "HN730.5.A8" },
+        { id: "_3F-323", name: "서가 323 뒷면", start: "HV730.5.A8", end: "HQ1236.한16" },
+        { id: "_3F-324", name: "서가 324 앞면", start: "HQ1236.C67", end: "HX44.X6" },
+        { id: "_3F-324", name: "서가 324 뒷면", start: "HX71.김67", end: "JF1674.최44" },
+        { id: "_3F-325", name: "서가 325 앞면", start: "JF1725.신15", end: "JX1974.N56" },
+        { id: "_3F-325", name: "서가 325 뒷면", start: "JX1974.Q36", end: "KPA2720.박74" },
+        { id: "_3F-326", name: "서가 326 앞면", start: "KPA2720.장883", end: "LB1590.3.R92" },
+        { id: "_3F-326", name: "서가 326 뒷면", start: "LB1590.5.김64", end: "ML330.조16" },
+        { id: "_3F-327", name: "서가 327 앞면", start: "ML336.김44", end: "N7476.B38" },
+        { id: "_3F-327", name: "서가 327 뒷면", start: "N7477.박45", end: "NX640.R5" },
+        { id: "_3F-328", name: "서가 328 앞면", start: "NX650.C676", end: "PE1065.L44" },
+        { id: "_3F-328", name: "서가 328 뒷면", start: "PE1065.R42", end: "PG3368.B2.G67" },
+        { id: "_3F-329", name: "서가 329 앞면", start: "PG3368.B2.K8", end: "PL856.R6.식57" },
+        { id: "_3F-329", name: "서가 329 뒷면", start: "PL856.R6.엑552", end: "PL908.송68" },
+        { id: "_3F-330", name: "서가 330 앞면", start: "PL908. 야12", end: "PL953.차92" },
+        { id: "_3F-330", name: "서가 330 뒷면", start: "PL953.1.유38", end: "PL958.66.현23" },
+        { id: "_3F-331", name: "서가 331 앞면", start: "PL958.66.현23", end: "PL959.55.김549" },
+        { id: "_3F-331", name: "서가 331 뒷면", start: "PL959.55.김549", end: "PL959.55.박746" },
+        { id: "_3F-332", name: "서가 332 앞면", start: "PL959.55.박752", end: "PL959.55.이64" },
+        { id: "_3F-332", name: "서가 332 뒷면", start: "PL959.55.이64", end: "PL959.55.최156" },
+        { id: "_3F-333", name: "서가 333 앞면", start: "PL959.55.최18", end: "PL959.65.박685" },
+        { id: "_3F-333", name: "서가 333 뒷면", start: "PL959.65.박7354", end: "PL959.65.한566" },
+        { id: "_3F-334", name: "서가 334 앞면", start: "PL959.65.한66", end: "PL980.3.남16" },
+        { id: "_3F-334", name: "서가 334 뒷면", start: "PL980.3.남24", end: "PL2489.C43" },
+        { id: "_3F-335", name: "서가 335 앞면", start: "PL2489.Z6", end: "PN98.G67" },
+        { id: "_3F-335", name: "서가 335 뒷면", start: "PN98.H57", end: "PN4874.K575" },
+        { id: "_3F-336", name: "서가 336 앞면", start: "PN4874.L44", end: "PQ2605.A38" },
+        { id: "_3F-336", name: "서가 336 뒷면", start: "PQ2605.H327", end: "PR2993.F2" },
+        { id: "_3F-337", name: "서가 337 앞면", start: "PR2993.F2", end: "PR6065.G6" },
+        { id: "_3F-337", name: "서가 337 뒷면", start: "PR6065.N435", end: "PS3539.H74" },
+        { id: "_3F-338", name: "서가 338 앞면", start: "PS3539.R34", end: "PS3569.H2" },
+        { id: "_3F-338", name: "서가 338 뒷면", start: "PS3569.H3", end: "PZ4.B89" },
+        { id: "_3F-339", name: "서가 339 앞면", start: "PZ4.Z94", end: "Q115.부53" },
+        { id: "_3F-339", name: "서가 339 뒷면", start: "Q123.천25", end: "Q222.전65" },
+        { id: "_3F-340", name: "서가 340 앞면", start: "Q222.F67", end: "QA1.A57" },
+        { id: "_3F-340", name: "서가 340 뒷면", start: "QA1.A647", end: "QA1.L4" },
+        { id: "_3F-341", name: "서가 341 앞면", start: "QA1.L4", end: "QA3.P76" },
+        { id: "_3F-341", name: "서가 341 뒷면", start: "QA3.P8", end: "QA29.S633" },
+        { id: "_3F-342", name: "서가 342 앞면", start: "QA29.S67", end: "QA76.L4" },
+        { id: "_3F-342", name: "서가 342 뒷면", start: "QA76.L4", end: "QA76.6.D77" },
+        { id: "_3F-343", name: "서가 343 앞면", start: "QA76.6.E47", end: "QA76.73.J38" },
+        { id: "_3F-343", name: "서가 343 뒷면", start: "QA76.73.J38", end: "QA76.76.O63" },
+        { id: "_3F-344", name: "서가 344 앞면", start: "QA76.76.O63", end: "QA76.9.H85" },
+        { id: "_3F-344", name: "서가 344 뒷면", start: "QA76.9.I52", end: "QA184.G745" },
+        { id: "_3F-345", name: "서가 345 앞면", start: "QA184.H3", end: "QA266.A43" },
+        { id: "_3F-345", name: "서가 345 뒷면", start: "QA266.D4", end: "QA276.A2.H6" },
+        { id: "_3F-346", name: "서가 346 앞면", start: "QA276.A2.L427", end: "QA297.M87" },
+        { id: "_3F-346", name: "서가 346 뒷면", start: "QA297.N283", end: "QA329.I57" },
+        { id: "_3F-347", name: "서가 347 앞면", start: "QA329.J585", end: "QA377.N645" },
+        { id: "_3F-347", name: "서가 347 뒷면", start: "QA377.N658", end: "QA403.3.H47" },
+        { id: "_3F-348", name: "서가 348 앞면", start: "QA403.3.H65", end: "QA612.S79" },
+        { id: "_3F-348", name: "서가 348 뒷면", start: "QA612.S9", end: "QA808.2.L6" },
+        { id: "_3F-349", name: "서가 349 앞면", start: "QA808.2.M3", end: "QB16.N46" },
+        { id: "_3F-349", name: "서가 349 뒷면", start: "QB16.N46", end: "QB871.K33" },
+        { id: "_3F-350", name: "서가 350 앞면", start: "QB871.N38", end: "QC6.4.R4" },
+        { id: "_3F-350", name: "서가 350 뒷면", start: "QC6.4.R4", end: "QC21.2.신94" },
+        { id: "_3F-351", name: "서가 351 앞면", start: "QC21.2.윤75", end: "QC172.8.E9" },
+        { id: "_3F-351", name: "서가 351 뒷면", start: "QC173.조78", end: "QC174.12.S43" },
+        { id: "_3F-352", name: "서가 352 앞면", start: "QC174.12.Q3", end: "QC176.S67" },
+        { id: "_3F-352", name: "서가 352 뒷면", start: "QC176.S67", end: "QC311.류92" },
+        { id: "_3F-353", name: "서가 353 앞면", start: "QC311.이82", end: "QCC454.N8" },
+        { id: "_3F-353", name: "서가 353 뒷면", start: "QC454.O66", end: "QC611.9.C66" },
+        { id: "_3F-354", name: "서가 354 앞면", start: "QC611.9.F84", end: "QC718.5.P5" },
+        { id: "_3F-354", name: "서가 354 뒷면", start: "QC718.5.P5", end: "QC793.3.F5" },
+        { id: "_3F-355", name: "서가 355 앞면", start: "QC793.3.F5", end: "QC981.8.G56" },
+        { id: "_3F-355", name: "서가 355 뒷면", start: "QC981.8.G56", end: "QD39.3.E46" },
+        { id: "_3F-356", name: "서가 356 앞면", start: "QD39.3.E46", end: "QD96.A8.L37" },
+        { id: "_3F-356", name: "서가 356 뒷면", start: "QD96.A8.L38", end: "QD172.T6.K86" },
+        { id: "_3F-357", name: "서가 357 앞면", start: "QD172.T6", end: "QD262.O722" },
+        { id: "_3F-357", name: "서가 357 뒷면", start: "QD262.O722", end: "QD380.C64" },
+        { id: "_3F-358", name: "서가 358 앞면", start: "QD380.C64", end: "QD412.S6.J5" },
+        { id: "_3F-358", name: "서가 358 뒷면", start: "QD412.S6.L2", end: "QD461.M629" },
+        { id: "_3F-359", name: "서가 359 앞면", start: "QD461.M645", end: "QD504.K5" },
+        { id: "_3F-359", name: "서가 359 뒷면", start: "QD504.K55", end: "QD601.2.K5813" },
+        { id: "_3F-360", name: "서가 360 앞면", start: "QD601.2.L54", end: "QH212.S33.S36" },
+        { id: "_3F-360", name: "서가 360 뒷면", start: "QH212.S33.S373", end: "QH437.D38" },
+        { id: "_3F-361", name: "서가 361 앞면", start: "QH437.J66", end: "QH545.A3" },
+        { id: "_3F-361", name: "서가 361 뒷면", start: "QH545.C3", end: "QK753.H45" },
+        { id: "_3F-362", name: "서가 362 앞면", start: "QK753.P65", end: "QP176.B46" },
+        { id: "_3F-362", name: "서가 362 뒷면", start: "QP176.B83", end: "QP514.2.W49" },
+        { id: "_3F-363", name: "서가 363 앞면", start: "QP514.2.Z44", end: "QP601.식896" },
+        { id: "_3F-363", name: "서가 363 뒷면", start: "QP601.A1", end: "QP702.H4" },
+        { id: "_3F-364", name: "서가 364 앞면", start: "QP702.O44", end: "QR186.7.B57" },
+        { id: "_3F-364", name: "서가 364 뒷면", start: "QR186.7.B68", end: "RA565.K67" },
+        { id: "_3F-365", name: "서가 365 앞면", start: "RA565.P48", end: "RC271.C5.M65" },
+        { id: "_3F-365", name: "서가 365 뒷면", start: "RC271.C5.N34", end: "RD732.D74" },
+        { id: "_3F-366", name: "서가 366 앞면", start: "RD732.I57", end: "RS431.M45" },
+        { id: "_3F-366", name: "서가 366 뒷면", start: "RS431.O73", end: "T10.5.L4" },
+        { id: "_3F-367", name: "서가 367 앞면", start: "T10.5.L4", end: "T171.정78" },
+        { id: "_3F-367", name: "서가 367 뒷면", start: "T171.C219", end: "TA174.A78" },
+        { id: "_3F-368", name: "서가 368 앞면", start: "TA174.A79", end: "TA355.C4" },
+        { id: "_3F-368", name: "서가 368 뒷면", start: "TA355.D384", end: "TA405.N39" },
+        { id: "_3F-369", name: "서가 369 앞면", start: "TA405.P677", end: "TA418.8.A43" },
+        { id: "_3F-369", name: "서가 369 뒷면", start: "TA418.8.C2", end: "TA455.P59" },
+        { id: "_3F-370", name: "서가 370 앞면", start: "TA459.강68", end: "TA1570.K56" },
+        { id: "_3F-370", name: "서가 370 뒷면", start: "TA1600.흥78", end: "TD145.R5" },
+        { id: "_3F-371", name: "서가 371 앞면", start: "TD145.S7", end: "TD145.R5" },
+        { id: "_3F-371", name: "서가 371 뒷면", start: "TD883.W28", end: "TJ181.H89" },
+        { id: "_3F-372", name: "서가 372 앞면", start: "TJ181.M37", end: "TJ217.I17" },
+        { id: "_3F-372", name: "서가 372 뒷면", start: "TJ217.I17", end: "TJ838.H93" },
+        { id: "_3F-373", name: "서가 373 앞면", start: "TJ838.I578", end: "TK1005.C47" },
+        { id: "_3F-373", name: "서가 373 뒷면", start: "TK1005.D374", end: "TK5102.5.A285" },
+        { id: "_3F-374", name: "서가 374 앞면", start: "TK5102.5.A296145", end: "TK5104.P725" },
+        { id: "_3F-374", name: "서가 374 뒷면", start: "TK5104.P74", end: "TK5105.8885.W66" },
+        { id: "_3F-375", name: "서가 375 앞면", start: "TK5105.8885.W66", end: "TK7867.R37" },
+        { id: "_3F-375", name: "서가 375 뒷면", start: "TK7867.S277", end: "TK7871.85.F46" },
+        { id: "_3F-376", name: "서가 376 앞면", start: "TK7871.85.F593", end: "TK7874.N36" },
+        { id: "_3F-376", name: "서가 376 뒷면", start: "TK7874.O5", end: "TK7885.N47" },
+        { id: "_3F-377", name: "서가 377 앞면", start: "TK7885.P55", end: "TL243.M87" },
+        { id: "_3F-377", name: "서가 377 뒷면", start: "TL243.W66", end: "TN690.S32" },
+        { id: "_3F-378", name: "서가 378 앞면", start: "TN690.S56", end: "TP156.C35.C38" },
+        { id: "_3F-378", name: "서가 378 뒷면", start: "TP156.C35.C39", end: "TP248.2.B5" },
+        { id: "_3F-379", name: "서가 379 앞면", start: "TP248.2.B5", end: "TP490.A3" },
+        { id: "_3F-379", name: "서가 379 뒷면", start: "TP490.A3", end: "TP1122.C652" },
+        { id: "_3F-380", name: "서가 380 앞면", start: "TP1122.D482", end: "TS155.6.C57" },
+        { id: "_3F-380", name: "서가 380 뒷면", start: "TS155.6.C6", end: "TS195.4.선36" },
+        { id: "_3F-381", name: "서가 381 앞면", start: "TS198.3.A3", end: "TX726.박295" },
+        { id: "_3F-381", name: "서가 381 뒷면", start: "TX726.탁73", end: "ZA4235.K382" }
     ];
 
+    // 🚀 3. 강력한 청구기호 정규화 엔진
     function normalizeCN(cn) {
         if (!cn) return "";
         let out = cn.toUpperCase().replace(/\s+/g, '');
+        // 알파벳 뒤 숫자를 5자리 0으로 패딩 (예: RC480 -> RC00480)
         out = out.replace(/([A-Z]+)(\d+)/g, (m, p1, p2) => p1 + p2.padStart(5, '0'));
+        // 소수점 뒤 숫자를 5자리 0으로 패딩
         out = out.replace(/\.(\d+)/g, (m, p1) => p1.padEnd(5, '0'));
         return out;
     }
-
-    // 💡 [핵심 수정] 낡은 determineFloor 함수를 완전히 제거했습니다.
 
     window.onload = function() {
         const params = new URLSearchParams(window.location.search);
@@ -1108,23 +1216,30 @@
 
         let targetFloor = 3;
         let targetIds = [];
-
         let cleanLOC = rawLOC.replace(/\s+/g, '').toUpperCase();
 
+        // 🚨 스마트도서관 최우선 예외 처리 (도면 숨기고 지곡회관 안내)
+        if (cleanLOC.includes('스마트도서관')) {
+            document.getElementById('floor-title').innerText = `📍 스마트도서관 위치 안내`;
+            status.innerHTML = `✅ <span style="color:#C8175D; font-weight:bold; font-size:1.1em;">스마트도서관은 지곡회관으로 가세요.</span>`;
+            document.querySelectorAll('.map-layer').forEach(div => div.classList.remove('active'));
+            return;
+        }
+
+        // 🚨 특수 서가(보존서고, 딸림자료 등) 먼저 매칭 확인
         const matchedLocKey = Object.keys(specialLocations).find(key => {
             let cleanKey = key.replace(/\s+/g, '').toUpperCase();
             return cleanLOC.includes(cleanKey);
         });
 
-        // [우선순위 1] 특수 위치 (신착서가, 딸림자료 등)
         if (matchedLocKey) {
             targetFloor = specialLocations[matchedLocKey].floor;
             targetIds = specialLocations[matchedLocKey].ids;
             const displayName = specialLocations[matchedLocKey].name; 
             status.innerHTML = `✅ 위치 안내: <span style="color:#005a92;">${displayName}</span>`;
         } 
-        // [우선순위 2] 일반 청구기호 검색 (단행본 등)
         else if (rawCN) {
+            // 🚨 일반 단행본 청구기호 매칭 진행
             const targetNormalized = normalizeCN(rawCN);
             const foundShelf = shelfMapping.find(d => {
                 const startNorm = normalizeCN(d.start);
@@ -1132,7 +1247,6 @@
                 return targetNormalized >= startNorm && targetNormalized <= endNorm;
             });
 
-            // 💡 [핵심 로직] 텍스트에 "4층"이 명확히 있거나, 3층 서가 목록에 없으면 4층! 그 외엔 3층!
             if (cleanLOC.includes('4층') || cleanLOC.includes('4F')) {
                 targetFloor = 4;
                 status.innerHTML = `✅ 위치 안내: 4층 <br>📚 청구기호 [${rawCN}] (세부서가 업데이트 예정)`;
@@ -1140,7 +1254,7 @@
                 targetFloor = 3;
                 if (foundShelf) {
                     targetIds.push(foundShelf.id);
-                    status.innerHTML = `✅ 위치 안내: 3층 단행본 <br>📚 청구기호 [${rawCN}] ➡️ <span style="color:#005a92;">${foundShelf.id.replace('_', '')} 서가</span>`;
+                    status.innerHTML = `✅ 위치 안내: 3층 단행본 <br>📚 청구기호 [${rawCN}] ➡️ <span style="color:#005a92;">${foundShelf.name}</span>`;
                 } else {
                     status.innerHTML = `❌ 3층 서가 범위 밖입니다: [${rawCN}]`;
                 }
@@ -1152,7 +1266,7 @@
             status.innerText = `🔍 일반 도서 혹은 위치 정보 없음`;
         }
 
-        // 화면 레이어 처리 (해당 층 띄우고 서가에 불 켜기)
+        // 🚨 도면(SVG) 하이라이트 출력 로직
         document.querySelectorAll('.map-layer').forEach(div => div.classList.remove('active'));
         const activeLayer = document.getElementById(`svg-${targetFloor}f`);
         
@@ -1163,7 +1277,7 @@
             setTimeout(() => {
                 targetIds.forEach(id => {
                     const el = document.getElementById(id);
-                    if (el) el.classList.add('highlight');
+                    if (el) el.classList.add('highlight'); // 서가 통째로 붉은색 표시
                 });
             }, 100);
         }
