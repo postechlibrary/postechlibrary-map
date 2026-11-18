@@ -218,7 +218,7 @@
     </div>
 
 <script>
-    // 🚀 1. 특수 위치 매핑
+// 🚀 1. 특수 위치 매핑
     const specialLocations = {
         "신착서가": { floor: 2, ids: ["_2F_new1", "_2F_new2"], name: "신착서가" },
         "영어교양": { floor: 2, ids: ["_2F_Eng", "2f_Eng"], name: "영어교양" },
@@ -236,6 +236,11 @@
         "지정도서": { floor: 3, ids: ["_3F_Reserve"], name: "지정도서" }, 
         "제본저널": { floor: 4, ids: ["_4F_bound"], name: "제본저널" },   
         "참고자료": { floor: 4, ids: ["_4F_REF"], name: "참고자료" },
+        
+        // 🚨 [신규 추가] 4층 소급지 및 현행지
+        "소급지": { floor: 4, ids: [], name: "소급지 (4층)" },
+        "현행지": { floor: 4, ids: [], name: "현행지 (4층)" },
+
         "c2n": { floor: 2, ids: ["_2F_new1", "_2F_new2"], name: "신착서가" },
         "c3a": { floor: 2, ids: ["_2F_desk"], name: "대출데스크" },
         "c2a": { floor: 2, ids: ["_2F_desk"], name: "대출데스크" },
